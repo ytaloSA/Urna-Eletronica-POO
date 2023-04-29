@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import java.awt.Color;
 import java.awt.Image;
 
 public class UrnaEletronicaView extends JFrame {
@@ -11,6 +13,7 @@ public class UrnaEletronicaView extends JFrame {
         setSize(500,500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel = new JPanel(null);
+        panel.setBackground(Color.WHITE);
         add(panel);
 
         String caminhoUser = System.getProperty("user.dir");
