@@ -1,3 +1,4 @@
+package main.java.views;
 import javax.swing.*;
 import java.awt.GridLayout;
 import java.awt.event.*;
