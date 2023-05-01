@@ -7,7 +7,6 @@ java main.Main
 Pode ser main/Main.java ou main.Main que funciona igualmente**/
 public class Main {
     public static void main(String[] args) {
-        Candidato Maria = new Candidato("Maria", 50);
-        System.out.println(Maria.nome);
+        
     }
 }

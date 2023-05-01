@@ -1,9 +1,12 @@
 package main.java.models;
+
+import java.util.List;
+
 public abstract class Pessoa{
-    public String nome;
-    public int id;
-    public Pessoa(String nome, int id) {
-        this.nome=nome;
-        this.id=id;
+    public String titulo;
+    public List<String> dados;
+    public Pessoa(String titulo, List<String> dados) {
+        this.titulo=titulo;
+        this.dados=dados;
     }
 }

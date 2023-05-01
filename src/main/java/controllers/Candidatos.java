@@ -1,12 +1,13 @@
 package main.java.controllers;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-
- public final class BaseCandidatos {
-    protected Hashtable<String,List<String>> candidatos;
-    protected Hashtable<String, List<String>> gerar(){
+import main.java.models.Candidato;
+ public final class Candidatos {
+    protected static Hashtable<String, List<String>> gerar(){
+        Hashtable<String,List<String>> candidatos;
         candidatos = new Hashtable<String, List<String>>();
         candidatos.put("Arroz por cima ou por baixo do feijão?",List.of("Por cima","Por baixo"));
         candidatos.put("É Biscoito ou Bolacha?",List.of("Biscoito","Bolacha"));
@@ -25,17 +26,27 @@ import java.util.Set;
         candidatos.put("Jogo Indie pode piratear?",List.of("Não. É imperdoável!","E qual é o problema?"));
         return candidatos;
     }
-    /**
-     * Uma forma de processar separadamente cada elementeo do hashmap
-     * Irei remover tudo em seguida e transformar em função
-     */
-    public static void main(String[] args) {
-        BaseCandidatos base = new BaseCandidatos();
-        Hashtable<String,List<String>> dicionarioBase = base.gerar();
+    protected static List<Candidato> candidatos(){
+        List<Candidato> candidatos = new ArrayList<Candidato>();
+        Hashtable<String,List<String>> dicionarioBase = gerar();
         Set<String> keys = dicionarioBase.keySet();
         for (String key : keys){
-            System.out.println(key+" "+dicionarioBase.get(key)+"\n");
+            Candidato candidato = new Candidato(key,dicionarioBase.get(key));
+            candidatos.add(candidato);
         }
-        System.out.println(base.gerar());
+        return candidatos;
     }
+    /** Como usar cada elemento separadamente
+     * Use essa lógica para por o nome do candidato e suas opções na tela de votação
+     * O trecho abaixo imprime separadamente cada um dos elementos
+     * Serve apenas para entender a sintaxe
+     * O código ficou maior que o esperado pois resolvi embutir a lista generica de candidatos no próprio código
+    public static void main(String[] args) {
+        List<Candidato> lista = candidatos();
+        for (Candidato candidato:lista){
+            System.out.println(candidato.titulo);
+            System.out.println(candidato.dados);
+        }
+    }
+    **/
 }
