@@ -1,3 +1,2 @@
-Eleições Polêmicas
-Candidato: Biscoito , Id: 8
-Candidato: Bolacha , Id: 7
+Candidato:Biscoito,Id:8
+Candidato:Bolacha,Id:7

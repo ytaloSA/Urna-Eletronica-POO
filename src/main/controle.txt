@@ -1,0 +1,2 @@
+votosHash:1235
+eleitoresHash:1253

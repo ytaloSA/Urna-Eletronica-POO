@@ -1,0 +1,2 @@
+Candidato:Biscoito,hash:1234
+Candidato:Bolacha,hash:1233
