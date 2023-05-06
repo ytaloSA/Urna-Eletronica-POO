@@ -1,4 +1,5 @@
-package main.java.models;
+package main.java.controllers;
+import main.java.models.*;
 public interface iArquivos {
     public static void compararArquivos(){}
     public static void escreverArquivo(){}

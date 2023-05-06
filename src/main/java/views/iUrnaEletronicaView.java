@@ -1,3 +1,4 @@
+package main.java.views;
 public interface iUrnaEletronicaView {
     public void votoConfirmado();
     public void votoBranco();

@@ -1,7 +1,8 @@
 package main.java.models;
-import java.util.List;
-public final class Eleitor extends Pessoa{
-    public Eleitor(String titulo, List<String> dados){
-        super(titulo, dados);
+public final class Eleitor extends Participante{
+    String dataNascimento;
+    public Eleitor(String nomeParticipante, String dataNascimento){
+        super(nomeParticipante);
+        this.dataNascimento=dataNascimento;
     }
 }
