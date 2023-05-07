@@ -1,4 +1,4 @@
-package main.java.views;
+package main.java.view;
 public class UrnaMainView {
 
     private static boolean janelaAberta = false;
