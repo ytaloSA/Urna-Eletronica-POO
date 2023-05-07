@@ -1,2 +1,2 @@
-Candidato:Biscoito,hash:1234
-Candidato:Bolacha,hash:1233
+Votado:Biscoito,hash:1234
+Votado:Bolacha,hash:1235

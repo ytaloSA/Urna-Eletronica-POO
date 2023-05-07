@@ -1,5 +1,5 @@
 package main.java.models;
 
-public class Criptografia {
+public final class Criptografia {
     
 }

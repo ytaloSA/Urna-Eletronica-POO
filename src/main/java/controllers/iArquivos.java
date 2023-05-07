@@ -1,8 +1,12 @@
 package main.java.controllers;
-import main.java.models.*;
+import java.util.ArrayList;
+import main.java.models.Arquivos;
 public interface iArquivos {
     public static void compararArquivos(){}
-    public static void escreverArquivo(){}
-    public static void escreverArquivoRAM(){}
-    public static void lerArquivo(){}
+    public static void escreverArquivo(String arquivos){
+        Arquivos.escreverTxt(arquivos);
+    }
+    public static ArrayList<String[]> lerArquivo(String arquivo){
+        return Arquivos.lerTxt(arquivo);
+    }
 }

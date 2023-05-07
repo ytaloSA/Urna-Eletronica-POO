@@ -1,5 +1,6 @@
 package main.java.controllers;
-public interface iMain{
+import main.java.models.*;
+public interface iMain extends iArquivos, iCriptografia{
     public static void criarJanelaPrincipal(){}
     public static void criarJanelaDeErro(){}
     public static void iniciarVotacao(){}

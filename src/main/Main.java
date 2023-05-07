@@ -1,9 +1,6 @@
 package main;
-import main.java.models.*;
 import main.java.controllers.*;
-import main.java.views.*;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
+import main.java.models.Arquivos;
 /**Para compilar é necessário estar na pasta src e executar:
 javac main.Main.java
 Para executar, também é necessário estar na pasta src e usar o mesmo formato:
@@ -12,15 +9,20 @@ Pode ser main/Main.java ou main.Main que funciona igualmente
 O trecho abaixo imprime separadamente cada um dos elementos
 Serve apenas para entender a sintaxe dos candidatos
 **/
-public class Main {
+public final class Main implements iMain,iArquivos {
     public static void main(String[] args) {
-        System.setProperty("sun.java.command", "urnaeletronica");
-        String processo = ManagementFactory.getRuntimeMXBean().getName();
-        if (processo.contains("urnaeletronica")){
-            System.exit(0);
+        for (String[] linha : iArquivos.lerArquivo("candidatos.txt")){
+            for (String dado:linha){
+                System.out.println(dado);
+            }
         }
-        while (true){
-            System.out.println("Executando");
+        for (String[] linha : Arquivos.lerTxt("votos.txt")){
+            for (String dado:linha){
+                System.out.println(dado);
+            }
         }
+        String diretorioTrabalho = System.getProperty("user.dir");
+        System.out.println(diretorioTrabalho);
+
     }
 }
