@@ -14,12 +14,12 @@ Serve apenas para entender a sintaxe dos candidatos
 **/
 public final class Main implements iMain {
     public static void main(String[] args) {
-        for (String[] linha : iArquivos.lerArquivo("candidatos.txt")){
+        for (String[] linha : iArquivos.lerArquivoNaoFormatado("candidatos.txt")){
             for (String dado:linha){
                 System.out.println(dado);
             }
         }
-        for (String[] linha : Arquivos.lerTxt("votos.txt")){
+        for (String[] linha : Arquivos.lerTxtNaoFormatado("votos.txt")){
             for (String dado:linha){
                 System.out.println(dado);
             }

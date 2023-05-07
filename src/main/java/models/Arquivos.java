@@ -3,11 +3,9 @@ import java.io.*;
 import java.util.*;
 public final class Arquivos {
     private static String localDeTrabalho(){return System.getProperty("user.dir");}
-    public static ArrayList<String[]> lerTxt(String arquivotxt){
+    public static ArrayList<String[]> lerTxtNaoFormatado(String arquivotxt){
         final String localDeTrabalho = localDeTrabalho();
-        final String caminho;
-        caminho = localDeTrabalho+"/main/"+ arquivotxt;
-        System.out.println("Arquivo: " + caminho);
+        final String caminho = localDeTrabalho+"/main/"+ arquivotxt;
         ArrayList<String[]> linhas = new ArrayList<String[]>();
         Scanner leitor;
         try {
@@ -59,7 +57,7 @@ public final class Arquivos {
         Boolean existeArquivo = arquivo.exists();
         ArrayList<String[]> dados;
         if (existeArquivo){
-            dados = Arquivos.lerTxt(arquivotxt);
+            dados = Arquivos.lerTxtNaoFormatado(arquivotxt);
             dados.add(dadosParaEscrever);
         }
         else{
@@ -103,8 +101,29 @@ public final class Arquivos {
                 System.out.println("Verifique se os caminhos dos arquivos, os nomes para os mesmos e o formato está de acordo com os padrões");
             }
     }
+    public static ArrayList<String[]> lerArquivoFormatado(String arquivoTxt){
+        final String localDeTrabalho = localDeTrabalho();
+        final String caminho = localDeTrabalho+"/main/"+ arquivoTxt;
+        ArrayList<String[]> linhas = new ArrayList<String[]>();
+        try {
+            Scanner leitor = new Scanner(new File(caminho));
+            while (leitor.hasNext()) {
+                String linha = leitor.next();
+                linhas.add(linha.split(","));
+            }
+        } catch (Exception e) {
+            System.out.println("Algo deu errado! Mas é assim mesmo, tente de novo");
+        }
+        return linhas;
+    }
     public static void main(String[] args) {
-        String[] pombo = {"Pombo","10"};
-        escreverTxt("candidatos.txt", pombo);
+        //String[] pombo = {"Pombo","10"};
+        //escreverTxt("candidatos.txt", pombo);
+        for(String[] linha:lerArquivoFormatado("candidatos.txt")){
+            System.out.println(linha);
+            for(String palavra:linha){
+                System.out.println(palavra);
+            }
+        }
     }
 }
