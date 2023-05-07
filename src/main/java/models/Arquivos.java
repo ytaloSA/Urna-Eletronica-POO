@@ -80,15 +80,15 @@ public final class Arquivos {
                         escritor.newLine();
                     }
                 }
-                else if (arquivotxt=="candidatos.txt"){
+                else if (arquivotxt=="votos.txt"){
                     for (String[] linha:dados){
-                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]);
+                        escritor.write("Votado:"+linha[0]+",hash:"+linha[1]);
                         escritor.newLine();
                     }
                 }
-                else if (arquivotxt=="candidatos.txt"){
+                else if (arquivotxt=="eleitores.txt"){
                     for (String[] linha:dados){
-                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]);
+                        escritor.write("Nome:"+linha[0]+",hash:"+linha[1]);
                         escritor.newLine();
                     }
                 }
@@ -98,8 +98,13 @@ public final class Arquivos {
             catch (IOException e) {
                 System.out.println("Impossível escrever");
             }
-            for (String[] linha : dados){
-                
+            catch (Exception e){
+                System.out.println("Ops! algo deu errado");
+                System.out.println("Verifique se os caminhos dos arquivos, os nomes para os mesmos e o formato está de acordo com os padrões");
             }
+    }
+    public static void main(String[] args) {
+        String[] pombo = {"Pombo","10"};
+        escreverTxt("candidatos.txt", pombo);
     }
 }

@@ -1,2 +1,3 @@
 Candidato:Biscoito,Id:8
 Candidato:Bolacha,Id:7
+Candidato:Pombo,Id:10

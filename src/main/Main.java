@@ -1,10 +1,7 @@
 package main;
-
 import main.java.controllers.*;
 import main.java.models.Arquivos;
-import main.java.models.*;
 import main.java.view.*;
-import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 /**Para compilar é necessário estar na pasta src e executar:
@@ -15,7 +12,7 @@ Pode ser main/Main.java ou main.Main que funciona igualmente
 O trecho abaixo imprime separadamente cada um dos elementos
 Serve apenas para entender a sintaxe dos candidatos
 **/
-public final class Main implements iMain,iArquivos {
+public final class Main implements iMain {
     public static void main(String[] args) {
         for (String[] linha : iArquivos.lerArquivo("candidatos.txt")){
             for (String dado:linha){
