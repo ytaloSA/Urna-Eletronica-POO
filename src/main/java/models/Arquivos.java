@@ -101,7 +101,7 @@ public final class Arquivos {
                 System.out.println("Verifique se os caminhos dos arquivos, os nomes para os mesmos e o formato está de acordo com os padrões");
             }
     }
-    public static ArrayList<String[]> lerArquivoFormatado(String arquivoTxt){
+    public static ArrayList<String[]> lerTxtFormatado(String arquivoTxt){
         final String localDeTrabalho = localDeTrabalho();
         final String caminho = localDeTrabalho+"/main/"+ arquivoTxt;
         ArrayList<String[]> linhas = new ArrayList<String[]>();
@@ -116,10 +116,23 @@ public final class Arquivos {
         }
         return linhas;
     }
+    public static Boolean compararDados(String arquivoTxt,ArrayList<String[]> dadosComparar){
+        ArrayList<String[]> dado1 = lerTxtFormatado(arquivoTxt);
+        ArrayList<String[]> dado2 = dadosComparar;
+        ArrayList<String> lista1 = new ArrayList<String>();
+        ArrayList<String> lista2 = new ArrayList<String>();
+        for(String[] linha:dado1){
+            lista1.add(Arrays.toString(linha));
+        }
+        for(String[] linha:dado2){
+            lista2.add(Arrays.toString(linha));
+        }
+        return lista1.equals(lista2);
+    }
     public static void main(String[] args) {
         //String[] pombo = {"Pombo","10"};
         //escreverTxt("candidatos.txt", pombo);
-        for(String[] linha:lerArquivoFormatado("candidatos.txt")){
+        for(String[] linha:lerTxtFormatado("candidatos.txt")){
             System.out.println(linha);
             for(String palavra:linha){
                 System.out.println(palavra);

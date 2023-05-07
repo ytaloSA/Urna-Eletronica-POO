@@ -14,7 +14,7 @@ Serve apenas para entender a sintaxe dos candidatos
 **/
 public final class Main implements iMain {
     public static void main(String[] args) {
-        for (String[] linha : iArquivos.lerArquivoNaoFormatado("candidatos.txt")){
+        for (String[] linha : iArquivos.lerTxtNaoFormatado("candidatos.txt")){
             for (String dado:linha){
                 System.out.println(dado);
             }
