@@ -2,13 +2,12 @@ package main.java.models;
 import java.io.*;
 import java.util.*;
 public final class Arquivos {
+    private static String localDeTrabalho(){return System.getProperty("user.dir");}
     public static ArrayList<String[]> lerTxt(String arquivotxt){
-        final String diretorioDeTrabalho = System.getProperty("user.dir");
+        final String localDeTrabalho = localDeTrabalho();
         final String caminho;
-        caminho = diretorioDeTrabalho+"/main/"+ arquivotxt;
+        caminho = localDeTrabalho+"/main/"+ arquivotxt;
         System.out.println("Arquivo: " + caminho);
-        //if (arquivotxt == "candidatos.txt"){arquivo = "candidatos.txt";}
-        //else{arquivo = raizUsusario + arquivotxt;}
         ArrayList<String[]> linhas = new ArrayList<String[]>();
         Scanner leitor;
         try {
@@ -22,7 +21,7 @@ public final class Arquivos {
                     String[] valores = {candidato,id};
                     linhas.add(valores);
                 }
-                if (linha.contains("Nome:")){
+                else if (linha.contains("Nome:")){
                     String[] partes = linha.split(",");
                     String nome = partes[0].substring(partes[0].indexOf(":")+1);
                     String nascimento = partes[1].substring(partes[1].indexOf(":")+1);
@@ -30,19 +29,18 @@ public final class Arquivos {
                     String[] valores = {nome,nascimento,hash};
                     linhas.add(valores);
                 }
-                if (linha.contains("Votado:")){
+                else if (linha.contains("Votado:")){
                     String[] partes = linha.split(",");
                     String votado = partes[0].substring(partes[0].indexOf(":")+1);
                     String hash = partes[1].substring(partes[1].indexOf(":")+1);
                     String[] valores = {votado,hash};
                     linhas.add(valores);
                 }
-                if (linha.contains("votosHash:")){
-                    String[] valores = {linha.substring(linha.indexOf(":")+1)};
-                    linhas.add(valores);
-                }
-                if (linha.contains("eleitoresHash:")){
-                    String[] valores = {linha.substring(linha.indexOf(":")+1)};
+                else if (linha.contains("Controle:")){
+                    String[] partes = linha.split(",");
+                    String controle = partes[0].substring(partes[0].indexOf(":")+1);
+                    String hash = partes[1].substring(partes[1].indexOf(":")+1);
+                    String[] valores = {controle,hash};
                     linhas.add(valores);
                 }
             }
@@ -55,10 +53,53 @@ public final class Arquivos {
             return linhas;
         }
     }
-    public static void escreverTxt(String arquivostxt){
-        ArrayList<String[]> dados = Arquivos.lerTxt(arquivostxt);
-        for (String[] linha:dados){
-            
+    public static void escreverTxt(String arquivotxt,String[] dadosParaEscrever){
+        String localDeTrabalho = localDeTrabalho();
+        File arquivo = new File(localDeTrabalho+"/main/"+arquivotxt);
+        Boolean existeArquivo = arquivo.exists();
+        ArrayList<String[]> dados;
+        if (existeArquivo){
+            dados = Arquivos.lerTxt(arquivotxt);
+            dados.add(dadosParaEscrever);
         }
+        else{
+            dados = new ArrayList<String[]>();
+            dados.add(dadosParaEscrever);
+        }
+            try{
+                BufferedWriter escritor = new BufferedWriter(new FileWriter(arquivo));
+                if (arquivotxt=="candidatos.txt"){
+                    for (String[] linha:dados){
+                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]);
+                        escritor.newLine();
+                    }
+                }
+                else if (arquivotxt=="controle.txt"){
+                    for (String[] linha:dados){
+                        escritor.write("Controle:"+linha[0]+",hash:"+linha[1]);
+                        escritor.newLine();
+                    }
+                }
+                else if (arquivotxt=="candidatos.txt"){
+                    for (String[] linha:dados){
+                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]);
+                        escritor.newLine();
+                    }
+                }
+                else if (arquivotxt=="candidatos.txt"){
+                    for (String[] linha:dados){
+                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]);
+                        escritor.newLine();
+                    }
+                }
+                escritor.close();
+                
+            }
+            catch (IOException e) {
+                System.out.println("Impossível escrever");
+            }
+            for (String[] linha : dados){
+                
+            }
     }
 }
