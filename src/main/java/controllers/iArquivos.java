@@ -1,6 +1,7 @@
 package main.java.controllers;
 import java.util.ArrayList;
 import main.java.models.Arquivos;
+import main.java.models.Candidato;
 /**
  * Descrição dos métodos:
  * comparar(): Recebe uma string que especifica um arquivo que será usado para fins de copmparação e um ArrayList
@@ -33,5 +34,13 @@ public interface iArquivos {
     }
     public static ArrayList<String[]> lerTxtFormatado(String arquivo) {
         return Arquivos.lerTxtFormatado(arquivo);
+    }
+    public static ArrayList<Candidato> getCandidatos() {
+        ArrayList<Candidato> candidatos = new ArrayList<Candidato>();
+        ArrayList<String[]> dados = Arquivos.lerTxtNaoFormatado("candidatos.txt");
+        for(String[] dado : dados){
+            candidatos.add(new Candidato(dado[0], dado[1]));
+        }
+        return candidatos;
     }
 }
