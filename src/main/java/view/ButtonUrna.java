@@ -4,12 +4,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public abstract class ButtonUrna extends JButton {
-    public String keyName;
-    public String nameIcon;
-    public String nameIconPressed;
-    public ImageIcon icon;
-    public ImageIcon iconPressed;
-
+    protected String keyName;
+    private String nameIcon;
+    private String nameIconPressed;
+    private ImageIcon icon;
+    private ImageIcon iconPressed;
     public ButtonUrna(String nome, String caminho) {
         super();
         nameIcon = nome + ".jpg";
@@ -30,5 +29,21 @@ public abstract class ButtonUrna extends JButton {
         } else {
             setIcon(icon);
         }
+    }
+
+    public String getNameIcon() {
+        return nameIcon;
+    }
+
+    public String getNameIconPressed() {
+        return nameIconPressed;
+    }
+
+    public ImageIcon getIcon() {
+        return icon;
+    }
+
+    public ImageIcon getIconPressed() {
+        return iconPressed;
     }
 }

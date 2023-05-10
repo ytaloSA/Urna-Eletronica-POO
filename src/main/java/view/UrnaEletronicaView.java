@@ -1,6 +1,8 @@
 package main.java.view;
 
 import javax.swing.*;
+import main.java.view.util.CaptureTeclas;
+import main.java.view.util.MensagemDialogo;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -26,7 +28,7 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
     private JLabel jLtela, jLtopo, jLfaixaDir, jLladoEsqTec, jLladoDirTec, jLptaBaixo7, jLptaBaixo9, jLabaixoTec;
     
     /**
-     * Conteiner principal da aplicação.
+     * Conteiner principal da aplicação
      */
     private JPanel panel;
 
@@ -36,7 +38,7 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
     private VisorVotacaoView visorVotacao;
 
     /**
-     * Armazenamento do caminho do projeto para construção de caminho relativo.
+     * Armazenamento do caminho do projeto para construção de caminho relativo
      */
     private String caminhoImages;
 
@@ -49,6 +51,7 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
             /**
              * Definição das propriedades da tela e instanciação do panel principal
              */
+            setTitle("Urna Eletrônica: Tela de Votação");
             setSize(500,500);
             setExtendedState(MAXIMIZED_BOTH);
             
@@ -63,7 +66,6 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
              * Instânciando container do visor da urna
              */
             visorVotacao = new VisorVotacaoView("Bolacha x Biscoito");
-            visorVotacao.setBounds(50, 207, 547, 319);
             visorVotacao.setBackground(Color.WHITE);
             panel.add(visorVotacao);
 
@@ -83,6 +85,9 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
             buttons[11] = new ButtonUrnaAction("corrige", caminhoImages);
             buttons[12] = new ButtonUrnaAction("confirma", caminhoImages);
 
+            /**
+             * Adicionando ouvintes de eventos para o mouse e teclado
+             */
             adicionarListenes();
 
             /**
@@ -121,6 +126,9 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
             panel.add(jLptaBaixo9);
             panel.add(jLabaixoTec);
 
+            /**
+             * Contrução do layout da urna: Definindo as posições na tela para cada parte de imagem da urna e os botões
+             */
             setPositionComponents();
 
             /**
@@ -140,6 +148,15 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
 
     public void adicionarListenes() {
         /**
+         * Adiciona ouvintes para as teclas do teclado
+         */
+        try {
+            CaptureTeclas capture = new CaptureTeclas(buttons);
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(capture);
+        } catch (Exception ex) {
+            MensagemDialogo.mostrarMensagemDialogo(ex);
+        }
+        /**
          * Adicionando ouvintes de eventos para o botão esquerdo do mouse para trocar as imagens dos botões para sua versão pressionada
          */
         for (int c = 0; c < buttons.length; c++) {
@@ -150,12 +167,10 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
                     buttons[index].setImageButton(true);
                     try {
                         String key = buttons[index].getKeyName();
-                        JOptionPane.showMessageDialog(null, key);
                         if (buttons[index] instanceof ButtonUrnaNumerico) {
                             visorVotacao.incluirNumeroDigitado(key);
                         }
                         else {
-
                             if (key == "branco") {
                                 votoBranco();
                             } else if (key == "corrige") {
@@ -164,8 +179,8 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
                                 votoConfirmado();
                             }
                         }
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null,ex.getMessage());
+                    }  catch (Exception ex) {
+                        MensagemDialogo.mostrarMensagemDialogo(ex);
                     }
                 }
 
@@ -188,7 +203,7 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
 
     public void setPositionComponents() {
         /**
-         * Definindo as posições na tela para cada parte de imagem da urna e os botões
+         * Contrução do layout da urna: Definindo as posições na tela para cada parte de imagem da urna e os botões
          */
         jLtela.setBounds(0, 0, itela.getIconWidth(), itela.getIconHeight());
 
@@ -198,39 +213,39 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
 
         jLladoEsqTec.setBounds(itela.getIconWidth(), itopo.getIconHeight()-3, iladoEsqTec.getIconWidth(), iladoEsqTec.getIconHeight());
 
-        buttons[1].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3, buttons[1].icon.getIconWidth(), buttons[1].icon.getIconHeight());
+        buttons[1].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3, buttons[1].getIcon().getIconWidth(), buttons[1].getIcon().getIconHeight());
 
-        buttons[2].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[1].icon.getIconWidth(), itopo.getIconHeight()-3, buttons[2].icon.getIconWidth(), buttons[2].icon.getIconHeight());
+        buttons[2].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[1].getIcon().getIconWidth(), itopo.getIconHeight()-3, buttons[2].getIcon().getIconWidth(), buttons[2].getIcon().getIconHeight());
 
-        buttons[3].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[1].icon.getIconWidth() + buttons[2].icon.getIconWidth(), itopo.getIconHeight()-3, buttons[3].icon.getIconWidth(), buttons[3].icon.getIconHeight());
+        buttons[3].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[1].getIcon().getIconWidth() + buttons[2].getIcon().getIconWidth(), itopo.getIconHeight()-3, buttons[3].getIcon().getIconWidth(), buttons[3].getIcon().getIconHeight());
 
-        jLladoDirTec.setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[1].icon.getIconWidth() + buttons[2].icon.getIconWidth() + buttons[3].icon.getIconWidth(), itopo.getIconHeight()-3, iladoDirTec.getIconWidth(), iladoDirTec.getIconHeight());
+        jLladoDirTec.setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[1].getIcon().getIconWidth() + buttons[2].getIcon().getIconWidth() + buttons[3].getIcon().getIconWidth(), itopo.getIconHeight()-3, iladoDirTec.getIconWidth(), iladoDirTec.getIconHeight());
 
-        buttons[4].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight(), buttons[4].icon.getIconWidth(), buttons[4].icon.getIconHeight());
+        buttons[4].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight(), buttons[4].getIcon().getIconWidth(), buttons[4].getIcon().getIconHeight());
 
-        buttons[5].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[4].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight(), buttons[5].icon.getIconWidth(), buttons[5].icon.getIconHeight());
+        buttons[5].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[4].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight(), buttons[5].getIcon().getIconWidth(), buttons[5].getIcon().getIconHeight());
 
-        buttons[6].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[5].icon.getIconWidth() + buttons[4].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight(), buttons[6].icon.getIconWidth(), buttons[6].icon.getIconHeight());
+        buttons[6].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[5].getIcon().getIconWidth() + buttons[4].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight(), buttons[6].getIcon().getIconWidth(), buttons[6].getIcon().getIconHeight());
 
-        buttons[7].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight(), buttons[7].icon.getIconWidth(), buttons[7].icon.getIconHeight());
+        buttons[7].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight(), buttons[7].getIcon().getIconWidth(), buttons[7].getIcon().getIconHeight());
 
-        buttons[8].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[4].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight(), buttons[8].icon.getIconWidth(), buttons[8].icon.getIconHeight());
+        buttons[8].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[4].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight(), buttons[8].getIcon().getIconWidth(), buttons[8].getIcon().getIconHeight());
 
-        buttons[9].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[4].icon.getIconWidth() + buttons[5].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight(), buttons[9].icon.getIconWidth(), buttons[9].icon.getIconHeight());
+        buttons[9].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + buttons[4].getIcon().getIconWidth() + buttons[5].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight(), buttons[9].getIcon().getIconWidth(), buttons[9].getIcon().getIconHeight());
         
-        jLptaBaixo7.setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[9].icon.getIconHeight(), iptaBaixo7.getIconWidth(), iptaBaixo7.getIconHeight());
+        jLptaBaixo7.setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[9].getIcon().getIconHeight(), iptaBaixo7.getIconWidth(), iptaBaixo7.getIconHeight());
         
-        buttons[0].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + iptaBaixo7.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[9].icon.getIconHeight(), buttons[0].icon.getIconWidth(), buttons[0].icon.getIconHeight());
+        buttons[0].setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + iptaBaixo7.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[9].getIcon().getIconHeight(), buttons[0].getIcon().getIconWidth(), buttons[0].getIcon().getIconHeight());
         
-        jLptaBaixo9.setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + iptaBaixo7.getIconWidth() + buttons[0].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[9].icon.getIconHeight(), iptaBaixo9.getIconWidth(), iptaBaixo9.getIconHeight());
+        jLptaBaixo9.setBounds(itela.getIconWidth() + iladoEsqTec.getIconWidth() + iptaBaixo7.getIconWidth() + buttons[0].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[9].getIcon().getIconHeight(), iptaBaixo9.getIconWidth(), iptaBaixo9.getIconHeight());
 
-        buttons[10].setBounds(itela.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[7].icon.getIconHeight() + iptaBaixo7.getIconHeight(), buttons[10].icon.getIconWidth(), buttons[10].icon.getIconHeight());
+        buttons[10].setBounds(itela.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[7].getIcon().getIconHeight() + iptaBaixo7.getIconHeight(), buttons[10].getIcon().getIconWidth(), buttons[10].getIcon().getIconHeight());
     
-        buttons[11].setBounds(itela.getIconWidth() + buttons[10].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[7].icon.getIconHeight() + iptaBaixo7.getIconHeight(), buttons[11].icon.getIconWidth(), buttons[11].icon.getIconHeight());
+        buttons[11].setBounds(itela.getIconWidth() + buttons[10].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[7].getIcon().getIconHeight() + iptaBaixo7.getIconHeight(), buttons[11].getIcon().getIconWidth(), buttons[11].getIcon().getIconHeight());
     
-        buttons[12].setBounds(itela.getIconWidth() + buttons[10].icon.getIconWidth() + buttons[11].icon.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[7].icon.getIconHeight() + iptaBaixo9.getIconHeight(), buttons[12].icon.getIconWidth(), buttons[12].icon.getIconHeight());
+        buttons[12].setBounds(itela.getIconWidth() + buttons[10].getIcon().getIconWidth() + buttons[11].getIcon().getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[7].getIcon().getIconHeight() + iptaBaixo9.getIconHeight(), buttons[12].getIcon().getIconWidth(), buttons[12].getIcon().getIconHeight());
 
-        jLabaixoTec.setBounds(itela.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].icon.getIconHeight() + buttons[4].icon.getIconHeight() + buttons[7].icon.getIconHeight() + iptaBaixo7.getIconHeight() + buttons[10].icon.getIconHeight(), iabaixoTec.getIconWidth(), iabaixoTec.getIconHeight());
+        jLabaixoTec.setBounds(itela.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[7].getIcon().getIconHeight() + iptaBaixo7.getIconHeight() + buttons[10].getIcon().getIconHeight(), iabaixoTec.getIconWidth(), iabaixoTec.getIconHeight());
     }
 
     @Override
