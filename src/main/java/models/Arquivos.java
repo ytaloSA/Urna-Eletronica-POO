@@ -1,6 +1,9 @@
 package main.java.models;
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
+
+import main.java.models.utils.Criptografia;
 public final class Arquivos {
     private static String localDeTrabalho(){return System.getProperty("user.dir");}
     public static ArrayList<String[]> lerTxtNaoFormatado(String arquivotxt){
@@ -15,23 +18,25 @@ public final class Arquivos {
                 if(linha.contains("Candidato:")){
                     String[] partes =  linha.split(",");
                     String candidato = partes[0].substring(partes[0].indexOf(":")+1);
-                    String id = partes[1].substring(partes[1].indexOf(":")+1);
-                    String[] valores = {candidato,id};
+                    String numero = partes[1].substring(partes[1].indexOf(":")+1);
+                    String[] valores = {candidato,numero};
                     linhas.add(valores);
                 }
-                else if (linha.contains("Nome:")){
+                else if (linha.contains("Eleitor:")){
                     String[] partes = linha.split(",");
-                    String nome = partes[0].substring(partes[0].indexOf(":")+1);
+                    String eleitor = partes[0].substring(partes[0].indexOf(":")+1);
                     String nascimento = partes[1].substring(partes[1].indexOf(":")+1);
-                    String hash = partes[2].substring(partes[2].indexOf(":")+1);
-                    String[] valores = {nome,nascimento,hash};
+                    String id = partes[2].substring(partes[2].indexOf(":")+1);
+                    String hash = partes[3].substring(partes[3].indexOf(":")+1);
+                    String[] valores = {eleitor,nascimento,id,hash};
                     linhas.add(valores);
                 }
-                else if (linha.contains("Votado:")){
+                else if (linha.contains("Voto:")){
                     String[] partes = linha.split(",");
-                    String votado = partes[0].substring(partes[0].indexOf(":")+1);
-                    String hash = partes[1].substring(partes[1].indexOf(":")+1);
-                    String[] valores = {votado,hash};
+                    String voto = partes[0].substring(partes[0].indexOf(":")+1);
+                    String id = partes[1].substring(partes[1].indexOf(":")+1);
+                    String hash = partes[2].substring(partes[2].indexOf(":")+1);
+                    String[] valores = {voto,id,hash};
                     linhas.add(valores);
                 }
                 else if (linha.contains("Controle:")){
@@ -68,25 +73,25 @@ public final class Arquivos {
                 BufferedWriter escritor = new BufferedWriter(new FileWriter(arquivo));
                 if (arquivotxt=="candidatos.txt"){
                     for (String[] linha:dados){
-                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]);
+                        escritor.write("Candidato:"+linha[0]+",Id:"+linha[1]+",Hash:"+linha[2]);
                         escritor.newLine();
                     }
                 }
                 else if (arquivotxt=="controle.txt"){
                     for (String[] linha:dados){
-                        escritor.write("Controle:"+linha[0]+",hash:"+linha[1]);
+                        escritor.write("Controle:"+linha[0]+",Hash:"+linha[1]);
                         escritor.newLine();
                     }
                 }
                 else if (arquivotxt=="votos.txt"){
                     for (String[] linha:dados){
-                        escritor.write("Votado:"+linha[0]+",hash:"+linha[1]);
+                        escritor.write("Voto:"+linha[0]+",Id:"+linha[1]+",Hash:"+linha[2]);
                         escritor.newLine();
                     }
                 }
                 else if (arquivotxt=="eleitores.txt"){
                     for (String[] linha:dados){
-                        escritor.write("Nome:"+linha[0]+",hash:"+linha[1]);
+                        escritor.write("Eleitor:"+linha[0]+",Nascimento:"+linha[1]+",Id"+linha[2]+",Hash:"+linha[3]);
                         escritor.newLine();
                     }
                 }
@@ -101,6 +106,68 @@ public final class Arquivos {
                 System.out.println("Verifique se os caminhos dos arquivos, os nomes para os mesmos e o formato está de acordo com os padrões");
             }
     }
+
+    public static ArrayList<Candidato> getCandidatos() throws NoSuchAlgorithmException {
+
+        ArrayList<String[]> linhasCandidato = lerTxtFormatado("candidatos.txt");
+        ArrayList<Candidato> c = new ArrayList<Candidato>();
+        for (String[] linhas : linhasCandidato) {
+            String linhaTxt = getLinhaToString(linhas, "candidato");
+            boolean validation = Criptografia.Validarhash(linhas[2], linhaTxt);
+            if (!validation) {
+                throw new RuntimeException("Arquivo de candidatos corrompido ou houve alteração indevida.");
+            }
+            Candidato candidato = new Candidato(linhas[0],linhas[1]);
+            c.add(candidato);
+        }
+
+        return c;
+    }
+
+    public static ArrayList<Voto> getVotos() throws NoSuchAlgorithmException {
+        ArrayList<String[]> linhasVoto = lerTxtFormatado("voto.txt");
+        ArrayList<Voto> v = new ArrayList<Voto>();
+        for (String[] linhas : linhasVoto) {
+            String linhaTxt = getLinhaToString(linhas, "voto");
+            boolean validation = Criptografia.Validarhash(linhas[2], linhaTxt);
+            if (!validation) {
+                throw new RuntimeException("Arquivo de votos corrompido ou houve alteração indevida.");
+            }
+            Voto voto = new Voto(linhas[0],linhas[1]);
+            v.add(voto);
+        }
+
+        return v;
+    }
+
+    public static ArrayList<Eleitor> getEleitores() throws NoSuchAlgorithmException {
+        ArrayList<String[]> linhasEleitor = lerTxtFormatado("eleitores.txt");
+        ArrayList<Eleitor> e = new ArrayList<Eleitor>();
+        for (String[] linhas : linhasEleitor) {
+            String linhaTxt = getLinhaToString(linhas, "eleitor");
+            boolean validation = Criptografia.Validarhash(linhas[2], linhaTxt);
+            if (!validation) {
+                throw new RuntimeException("Arquivo de eleitores corrompido ou houve alteração indevida.");
+            }
+            Eleitor eleitor = new Eleitor(linhas[0],linhas[1]);
+            e.add(eleitor);
+        }
+
+        return e;
+    }
+
+    public static String getLinhaToString(String[] str, String type) {
+        String texto;
+        if (type == "candidato") {
+            texto = "Candidato:"+str[0]+",Id:"+str[1];
+        } else if (type == "eleitor") {
+            texto = "Eleitor:"+str[0]+",Nascimento:"+str[1]+",Id"+str[2];
+        } else {
+            texto = "Voto:"+str[0]+",Id:"+str[1];
+        }
+        return texto;
+    }
+
     public static ArrayList<String[]> lerTxtFormatado(String arquivoTxt){
         final String localDeTrabalho = localDeTrabalho();
         final String caminho = localDeTrabalho+"/main/"+ arquivoTxt;

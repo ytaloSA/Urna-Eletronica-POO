@@ -1,8 +1,13 @@
 package main;
 import main.java.controllers.*;
 import main.java.models.Arquivos;
+import main.java.models.Candidato;
+import main.java.models.Voto;
 import main.java.view.*;
 import main.java.view.util.MensagemDialogo;
+
+import java.util.ArrayList;
+
 import javax.swing.JFrame;
 /**Para compilar é necessário estar na pasta src e executar:
 javac main.Main.java

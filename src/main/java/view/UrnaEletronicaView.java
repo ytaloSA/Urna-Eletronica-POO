@@ -1,17 +1,16 @@
 package main.java.view;
 
 import javax.swing.*;
-import main.java.view.util.CaptureTeclas;
+
+import main.java.view.component.ButtonUrna;
+import main.java.view.component.VisorVotacaoView;
+import main.java.view.interfaces.iUrnaEletronicaView;
+//import main.java.view.util.CaptureTeclas;
 import main.java.view.util.MensagemDialogo;
 import java.awt.*;
 import java.awt.event.*;
 
-public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
-    /**
-     * Variável de controle para impedir duas ou mais janelas simultâneas
-     */
-    private static Boolean janelaAberta = false;
-
+public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaView {
     /**
      * Array para armazenas botões da urna e o caminho das respectivas imagens
      */
@@ -42,18 +41,37 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
      */
     private String caminhoImages;
 
+    private boolean aptoConfirmarVoto = false;
+
+    private String numeroDigitado = "", cargo;
+
+    private int num;
+
     public UrnaEletronicaView () {
+        super();
+        ConstructUrnaEletronicaView(3, "Bolacha x Biscoito");
+    }
+
+    public UrnaEletronicaView (int num, String cargo) {
+        super();
+        ConstructUrnaEletronicaView(num, cargo);
+    }
+
+    public void ConstructUrnaEletronicaView (int num, String cargo) {
         
         /**
          * Verifica se há janela aberta
          */
         if (!janelaAberta) {
+            this.num = num;
+            this.cargo = cargo;
             /**
              * Definição das propriedades da tela e instanciação do panel principal
              */
             setTitle("Urna Eletrônica: Tela de Votação");
             setSize(500,500);
             setExtendedState(MAXIMIZED_BOTH);
+            setCaminhoImages();
             
             /**
              * Instânciando container principal
@@ -65,25 +83,24 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
             /**
              * Instânciando container do visor da urna
              */
-            visorVotacao = new VisorVotacaoView("Bolacha x Biscoito");
+            visorVotacao = new VisorVotacaoView(this.num, this.cargo);
             visorVotacao.setBackground(Color.WHITE);
             panel.add(visorVotacao);
 
-            setCaminhoImages();
             
             /**
              * Instanciando os botões de 0 a 9
              */
             for (int c = 0; c <= 9; c++) {
-                buttons[c] = new ButtonUrnaNumerico("n" + c, caminhoImages);
+                buttons[c] = new ButtonUrna("n" + c, caminhoImages);
             }
 
             /**
              * Instanciando os botões especiais: Branco, Corrige e Confirma
              */
-            buttons[10] = new ButtonUrnaAction("branco", caminhoImages);
-            buttons[11] = new ButtonUrnaAction("corrige", caminhoImages);
-            buttons[12] = new ButtonUrnaAction("confirma", caminhoImages);
+            buttons[10] = new ButtonUrna("branco", caminhoImages);
+            buttons[11] = new ButtonUrna("corrige", caminhoImages);
+            buttons[12] = new ButtonUrna("confirma", caminhoImages);
 
             /**
              * Adicionando ouvintes de eventos para o mouse e teclado
@@ -147,36 +164,33 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
     }
 
     public void adicionarListenes() {
-        /**
-         * Adiciona ouvintes para as teclas do teclado
-         */
-        try {
-            CaptureTeclas capture = new CaptureTeclas(buttons);
-            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(capture);
-        } catch (Exception ex) {
-            MensagemDialogo.mostrarMensagemDialogo(ex);
-        }
+
+
         /**
          * Adicionando ouvintes de eventos para o botão esquerdo do mouse para trocar as imagens dos botões para sua versão pressionada
          */
         for (int c = 0; c < buttons.length; c++) {
             panel.add(buttons[c]);
-            final int index = c;
+            int index = c;
             buttons[c].addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
-                    buttons[index].setImageButton(true);
                     try {
+                        buttons[index].setImageButton(true);
                         String key = buttons[index].getKeyName();
-                        if (buttons[index] instanceof ButtonUrnaNumerico) {
-                            visorVotacao.incluirNumeroDigitado(key);
+                        if (key.length() <= 2) {
+                            adicionarDigito(key);
                         }
                         else {
                             if (key == "branco") {
-                                votoBranco();
+                                exibirVotoBranco();
                             } else if (key == "corrige") {
-                                visorVotacao.apagarNumeroDigitado();
-                            } else {
-                                votoConfirmado();
+                                if (aptoConfirmarVoto) {
+                                    reiniciarVotacao();
+                                } else {
+                                    removerDigito();
+                                }
+                            } else if (key == "confirma") {
+                                confimarVoto();
                             }
                         }
                     }  catch (Exception ex) {
@@ -248,21 +262,106 @@ public class UrnaEletronicaView extends JFrame implements iUrnaEletronicaView {
         jLabaixoTec.setBounds(itela.getIconWidth(), itopo.getIconHeight()-3 + buttons[1].getIcon().getIconHeight() + buttons[4].getIcon().getIconHeight() + buttons[7].getIcon().getIconHeight() + iptaBaixo7.getIconHeight() + buttons[10].getIcon().getIconHeight(), iabaixoTec.getIconWidth(), iabaixoTec.getIconHeight());
     }
 
-    @Override
-    public void votoConfirmado() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'votoConfirmado'");
+    public void reiniciarVotacao() {
+        aptoConfirmarVoto = false;
+        numeroDigitado = "";
+        visorVotacao.redefinirNumeroDigitado();
+        visorVotacao.esconderDadosVoto();
+    }
+
+    public void adicionarDigito(String c) {
+        if (numeroDigitado.length() < num) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(numeroDigitado);
+            sb.append(c);
+            numeroDigitado = sb.toString();
+            sb.capacity();
+            int restante = num - sb.length();
+            if (restante > 0) {
+                int position = sb.length() - 1;
+                for (int cont = position; cont < num; cont++) {
+                    sb.append(" ");
+                }
+            }
+            visorVotacao.atualizarTelaVotacao(sb.toString().toCharArray());
+            if (numeroDigitado.length() == num) {
+                validarVoto();
+            }
+        } else {
+            try {
+                throw new UnsupportedOperationException("Não é possível inserir mais números. Confirme o seu voto pressionando CONFIRMAR ou aperte CORRIGIR para reiniciar votação.");
+            } catch (Exception ex) {
+                MensagemDialogo.mostrarMensagemDialogo(ex);
+            }
+        }
+    }
+
+    public void removerDigito() {
+        if (numeroDigitado.length() > 1) {
+            numeroDigitado = numeroDigitado.substring(0, (numeroDigitado.length() - 1));
+        } else if (numeroDigitado.length() == 1) {
+            numeroDigitado = "";
+        } else {
+            try {
+                throw new UnsupportedOperationException("Não há números digitados para apagar. Digite o número do seu candidato.");
+            } catch (Exception ex) {
+                MensagemDialogo.mostrarMensagemDialogo(ex);
+            }
+        }
+        visorVotacao.atualizarTelaVotacao(numeroDigitado.toCharArray());
     }
 
     @Override
-    public void votoBranco() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'votoBranco'");
+    public void confimarVoto() {
+        if (aptoConfirmarVoto) {
+            visorVotacao.encerrarVotacao();
+            try {
+                throw new UnsupportedOperationException("Votação encerrada! Muito Obrigado por votar!");
+            } catch (Exception ex) {
+                MensagemDialogo.mostrarMensagemDialogo(ex);
+                janelaAberta = false;
+                numeroDigitado = "";
+                dispose();
+            }
+            //controller.registrarVoto(numeroDigitado);
+        } else {
+            try {
+                throw new UnsupportedOperationException("Digite todos os números necessários para poder confirmar o voto.");
+            } catch (Exception ex) {
+                MensagemDialogo.mostrarMensagemDialogo(ex);
+            }
+        }
     }
 
     @Override
-    public void votoNulo() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'votoNulo'");
+    public void exibirVotoBranco() {
+        numeroDigitado = "###";
+        visorVotacao.getJlNome().setText("Voto Branco");
+        visorVotacao.mostrarDadosVoto();
+        visorVotacao.getJlImgCandidato().setVisible(false);
+        aptoConfirmarVoto = true;
+    }
+
+    @Override
+    public void exibirVotoNulo() {
+        numeroDigitado = "***";
+        visorVotacao.getJlNome().setText("Voto Nulo");
+        visorVotacao.mostrarDadosVoto();
+        visorVotacao.getJlImgCandidato().setVisible(false);
+        aptoConfirmarVoto = true;
+    }
+    
+    @Override
+    public void exibirVotoValido() {
+        String nome = "Biscoito";
+        visorVotacao.getJlNome().setText(nome);
+        visorVotacao.mostrarDadosVoto();
+        visorVotacao.alterarFotoCandidato(nome);
+        visorVotacao.getJlImgCandidato().setVisible(true);
+        aptoConfirmarVoto = true;
+    }
+
+    public void validarVoto() {
+        exibirVotoValido();
     }
 }

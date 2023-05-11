@@ -1,4 +1,4 @@
-package main.java.view;
+package main.java.view.component;
 
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -15,7 +15,6 @@ public class VisorVotacaoView extends JPanel {
     private int numerosCargo;
     private JLabel tituloEleicao, jlImgCandidato, jlNome;
     private JLabel[] numeroContainer;
-    private String numeroDigitado;
     private JPanel panelPrincipal, panelCandidato, panelFim, jpInstructions;
     private CardLayout cardLayout;
     private ImageIcon iImgCandidato;
@@ -46,7 +45,6 @@ public class VisorVotacaoView extends JPanel {
         this.cargo = cargo;
         numerosCargo = num;
         numeroContainer = new JLabel[numerosCargo];
-        numeroDigitado = "";
         cardLayout = new CardLayout();
         setLayout(cardLayout);
         setBounds(x, y, width, height);
@@ -65,7 +63,6 @@ public class VisorVotacaoView extends JPanel {
         add(panelFim, "panelFim");
         
         cardLayout.show(this, "panelPrincipal");
-        //cardLayout.show(this, "panelFim");
     }
 
     public void setCaminhoImages() {
@@ -82,7 +79,6 @@ public class VisorVotacaoView extends JPanel {
         tituloEleicao.setBounds(dim[0], 50, dim[2], dim[3]);
         generateLabelsDigitos(panel,dim[0], dim[1]);
 
-        System.out.println(caminhoImages);
         iImgCandidato = new ImageIcon(caminhoImages + "Bolacha.png");
         jlImgCandidato = new JLabel(iImgCandidato);
         int x = getWidth() - iImgCandidato.getIconWidth();
@@ -166,54 +162,21 @@ public class VisorVotacaoView extends JPanel {
     }
 
     /**
-     * Método responsável por escrever o número digitado na tela.
-     * @param s é uma string contendo um caractere corresponde as teclas de 0 a 9 da urna.
+     * Método que atualizar o conteúdo de texto dos labels dos números no visor da votação
+     * @param s é um array de char contendo caracteres correspondentes as teclas de 0 a 9 da urna.
      */
-    public void incluirNumeroDigitado(String s) {
-        if (numeroDigitado.length() == numeroContainer.length) {
-            throw new UnsupportedOperationException("Limite de números para o candidato atingido. Verifique a numeração inserida e digite CONFIRMA para finalizar ou CORRIGE para reiniciar.");
+    public void atualizarTelaVotacao(char [] s) {
+        for (int c = 0; c < numeroContainer.length; c++) {
+            numeroContainer[c].setText(String.valueOf(s[c]));
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(numeroDigitado);
-        sb.append(s);
-        numeroDigitado = sb.toString();
-        atualizarTelaVotacao();
     }
 
     /**
-     * Método responsável por limpar a string dos números digitados e chama o método para atualizar a tela.
+     * Método responsável por limpar a string dos números digitados
      */
     public void redefinirNumeroDigitado() {
-        numeroDigitado = "";
-        atualizarTelaVotacao();
-    }
-
-    /**
-     * Método responsável por remover o último caractere adicionado a tela
-     */
-    public void apagarNumeroDigitado() {
-        if (numeroDigitado.length() == 0) {
-            throw new UnsupportedOperationException("Não há digitos para apagar. Digite o número do seu candidato.");
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append(numeroDigitado);
-        sb.deleteCharAt((numeroDigitado.length()-1));
-        numeroDigitado = sb.toString();
-        atualizarTelaVotacao();
-    }
-
-    /**
-     * Método que atualizar o conteúdo de texto dos labels dos números no visor da votação.
-     */
-    public void atualizarTelaVotacao() {
         for (int c = 0; c < numeroContainer.length; c++) {
-            String str = "";
-            if (c < numeroDigitado.length()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(numeroDigitado.charAt(c));
-                str = sb.toString();
-            }
-            numeroContainer[c].setText(str);
+            numeroContainer[c].setText("");
         }
     }
 
@@ -234,6 +197,15 @@ public class VisorVotacaoView extends JPanel {
         jlNome.setVisible(false);
         jpInstructions.setVisible(false);
     
+    }
+
+    public void alterarFotoCandidato(String nome) {
+        iImgCandidato = new ImageIcon(caminhoImages + nome + ".png");
+        jlImgCandidato.setIcon(iImgCandidato); 
+    }
+
+    public void encerrarVotacao() {
+        cardLayout.show(this, "panelFim");
     }
 
     public String getCargo() {
@@ -275,17 +247,6 @@ public class VisorVotacaoView extends JPanel {
         this.numeroContainer = numeroContainer;
     }
 
-
-    public String getNumeroDigitado() {
-        return numeroDigitado;
-    }
-
-
-    public void setNumeroDigitado(String numeroDigitado) {
-        this.numeroDigitado = numeroDigitado;
-    }
-
-
     public JPanel getPanelPrincipal() {
         return panelPrincipal;
     }
@@ -323,5 +284,55 @@ public class VisorVotacaoView extends JPanel {
 
     public void setCardLayout(CardLayout cardLayout) {
         this.cardLayout = cardLayout;
+    }
+
+
+    public JLabel getJlImgCandidato() {
+        return jlImgCandidato;
+    }
+
+
+    public void setJlImgCandidato(JLabel jlImgCandidato) {
+        this.jlImgCandidato = jlImgCandidato;
+    }
+
+
+    public JLabel getJlNome() {
+        return jlNome;
+    }
+
+
+    public void setJlNome(JLabel jlNome) {
+        this.jlNome = jlNome;
+    }
+
+
+    public JPanel getJpInstructions() {
+        return jpInstructions;
+    }
+
+
+    public void setJpInstructions(JPanel jpInstructions) {
+        this.jpInstructions = jpInstructions;
+    }
+
+
+    public ImageIcon getiImgCandidato() {
+        return iImgCandidato;
+    }
+
+
+    public void setiImgCandidato(ImageIcon iImgCandidato) {
+        this.iImgCandidato = iImgCandidato;
+    }
+
+
+    public String getCaminhoImages() {
+        return caminhoImages;
+    }
+
+
+    public void setCaminhoImages(String caminhoImages) {
+        this.caminhoImages = caminhoImages;
     }
 }

@@ -1,17 +1,23 @@
 package main.java.controllers;
 
+import java.util.ArrayList;
+
+import main.java.models.Resultado;
+
 public interface iUrnaController {
     void carregarListaCandidatos();
     void carregarListaEleitores();
     void carregarEleicao();
     void iniciarVotacao();
     void listarResultados();
-    void carregarResultados();
+    void abrirModuloMesario();
+    ArrayList<Resultado> carregarResultados();
     void reiniciarEleicao();
     void encerrarEleicao();
+    void validarEleitor();
     void autorizarEleitor();
-    void carregarModuloMesario();
     void inserirCandidato();
-    void inserirEleitor();
+    void inserirEleitor(String nome);
     void inserirEleicao();
+    void registrarVoto(String voto);
 }

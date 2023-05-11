@@ -1,2 +1,2 @@
-Votado:Biscoito,hash:1234
-Votado:Bolacha,hash:1235
+Voto:Biscoito,Id:521,Hash:1234
+Voto:Bolacha,Id:599,Hash:1235

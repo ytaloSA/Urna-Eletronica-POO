@@ -1,4 +1,4 @@
-package main.java.view;
+package main.java.view.component;
 
 public class ButtonUrnaAction extends ButtonUrna {
 

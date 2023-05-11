@@ -12,8 +12,7 @@ import java.awt.event.*;
 /**
  * Classe responsável por gerar a tela do menu principal da aplicação.
  */
-public class MenuPrincipalView extends JFrame {
-    private UrnaController controller;
+public class MenuPrincipalView extends WindowView {
     private JPanel panel;
     private JButton votarBtn, mesarioBtn, resultadosBtn, sairBtn;
     private Background backgroundPanel;
@@ -23,7 +22,7 @@ public class MenuPrincipalView extends JFrame {
         public Background() {
             String caminhoUser = System.getProperty("user.dir");
             String caminhoImages = caminhoUser + "\\main\\resources\\menu\\images\\";
-            background = new ImageIcon(caminhoImages + "biscoitovsbolacha.jpg").getImage();
+            background = new ImageIcon(caminhoImages + "bolacha-ou-biscoito.jpg").getImage();
         }
 
         @Override
@@ -34,76 +33,92 @@ public class MenuPrincipalView extends JFrame {
     }
 
     public MenuPrincipalView(UrnaController controller) {
-        this.controller = controller;
-
-        /**
-         * Definição de propriedade da janela: título, tamanho, dimensões, layout, localização, plano de fundo
-         */
-        setTitle("Urna Eletrônica: Menu Principal");
-        setSize(500,500);
-        setLayout(new BorderLayout());
-        setLocationRelativeTo(null);
-        backgroundPanel = new Background();
-        getContentPane().add(backgroundPanel);
-        
-
-        /**
-         * Adiciona o painel principal com layout de grade, sendo uma coluna e quatro linhas
-         */
-        panel = new JPanel();
-        panel.setOpaque(false);
-        add(panel, BorderLayout.SOUTH);
-
-        /**
-         * Adiciona listeners para os botões do menu principal
-         */
-        ActionListener listener = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                /**
-                 * Verifica qual o botão pressionado para chamar o método correspondente
-                 */
-                try {
-                    if (e.getSource() == resultadosBtn) {
-                        controller.listarResultados();
-                    } else if (e.getSource() == mesarioBtn) {
-                        controller.carregarModuloMesario();
-                    } else if (e.getSource() == votarBtn) {
-                        controller.iniciarVotacao();
-                    } else if (e.getSource() == sairBtn) {
-                        System.exit(0);
+        super();
+        if (!janelaAberta) {
+            WindowView.controller = controller;
+            
+            /**
+             * Definição de propriedade da janela: título, tamanho, dimensões, layout, localização, plano de fundo
+             */
+            setTitle("Urna Eletrônica: Menu Principal");
+            setSize(800,500);
+            setLayout(new BorderLayout());
+            setLocationRelativeTo(null);
+            backgroundPanel = new Background();
+            getContentPane().add(backgroundPanel);
+            
+            
+            /**
+             * Adiciona o painel principal com layout de grade, sendo uma coluna e quatro linhas
+             */
+            panel = new JPanel();
+            panel.setOpaque(false);
+            add(panel, BorderLayout.SOUTH);
+            
+            /**
+             * Adiciona listeners para os botões do menu principal
+             */
+            ActionListener listener = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    /**
+                     * Verifica qual o botão pressionado para chamar o método correspondente
+                     */
+                    try {
+                        if (e.getSource() == resultadosBtn) {
+                            controller.listarResultados();
+                        } else if (e.getSource() == mesarioBtn) {
+                            controller.abrirModuloMesario();
+                        } else if (e.getSource() == votarBtn) {
+                            controller.iniciarVotacao();
+                        } else if (e.getSource() == sairBtn) {
+                            System.exit(0);
+                        }
+                    } catch (Exception ex) {
+                        MensagemDialogo.mostrarMensagemDialogo(ex);
                     }
-                } catch (Exception ex) {
-                    MensagemDialogo.mostrarMensagemDialogo(ex);
                 }
-            }
-        };
-        
-        /**
-         * Instanciando e definindo as propriedades de tamanho, posição e texto dos botões do menu principal, bem como adicionando os listeners
-         */
-        votarBtn = new JButton("Votar");
-        votarBtn.setBounds(0, 0, 100, 30);
-        votarBtn.addActionListener(listener);
-        
-        mesarioBtn = new JButton("Módulo Mesário");
-        mesarioBtn.setBounds(0, 0, 100, 30);
-        mesarioBtn.addActionListener(listener);
-        
-        resultadosBtn = new JButton("Resultado das Eleições");
-        resultadosBtn.setBounds(0, 30, 100, 30);
-        resultadosBtn.addActionListener(listener);
-        
-        sairBtn = new JButton("Sair");
-        sairBtn.setBounds(0, 30, 100, 30);
-        sairBtn.addActionListener(listener);
+            };
+            
+            /**
+             * Instanciando e definindo as propriedades de tamanho, posição e texto dos botões do menu principal, bem como adicionando os listeners
+             */
+            votarBtn = new JButton("Votar");
+            votarBtn.setBounds(0, 0, 100, 30);
+            votarBtn.addActionListener(listener);
+            
+            mesarioBtn = new JButton("Módulo Mesário");
+            mesarioBtn.setBounds(0, 0, 100, 30);
+            mesarioBtn.addActionListener(listener);
+            
+            resultadosBtn = new JButton("Resultado das Eleições");
+            resultadosBtn.setBounds(0, 30, 100, 30);
+            resultadosBtn.addActionListener(listener);
+            
+            sairBtn = new JButton("Sair");
+            sairBtn.setBounds(0, 30, 100, 30);
+            sairBtn.addActionListener(listener);
+            
+            /**
+             * Adição dos botões ao painel principal e definindo a visisibilidade da janela
+             */
+            panel.add(votarBtn);
+            panel.add(mesarioBtn);
+            panel.add(resultadosBtn);
+            panel.add(sairBtn);
+            setVisible(true);
+        }
+    }
 
-        /**
-         * Adição dos botões ao painel principal e definindo a visisibilidade da janela
-         */
-        panel.add(votarBtn);
-        panel.add(mesarioBtn);
-        panel.add(resultadosBtn);
-        panel.add(sairBtn);
-        setVisible(true);
+    /**
+     * Reseta a variável de controle quando a janela é fechada
+     */
+    public void adicionarListenerJanelaFechando() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                //super.windowClosing(e);
+                janelaAberta = false;
+            }
+        });
     }
 }

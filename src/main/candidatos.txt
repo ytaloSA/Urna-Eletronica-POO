@@ -1,3 +1,3 @@
-Candidato:Biscoito,Id:8
-Candidato:Bolacha,Id:7
-Candidato:Pombo,Id:10
+Candidato:Biscoito,Id:8,Hash:985
+Candidato:Bolacha,Id:7,Hash:525
+Candidato:Pombo,Id:10,Hash:185

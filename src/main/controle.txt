@@ -1,2 +1,3 @@
-Controle:votos,votosHash:235
-Controle:eleitores,eleitoresHash:1253
+Controle:votos,Hash:235
+Controle:eleitores,Hash:1253
+Controle:candidatos,Hash:1236

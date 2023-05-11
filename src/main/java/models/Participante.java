@@ -1,7 +1,17 @@
 package main.java.models;
+
 public abstract class Participante{
-    String nome;
+    private String nome;
+
     public Participante(String nome) {
-        this.nome=nome;
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 }
