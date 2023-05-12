@@ -16,8 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.text.MaskFormatter;
-
-import main.java.view.util.CalculadoraCoordenadas;
 import main.java.view.util.MensagemDialogo;
 
 public class MesarioView extends WindowView {

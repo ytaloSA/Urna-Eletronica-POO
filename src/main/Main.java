@@ -1,13 +1,11 @@
+// -*- coding: utf-8 -*-
+
 package main;
+
 import main.java.controllers.*;
 import main.java.models.Arquivos;
-import main.java.models.Candidato;
-import main.java.models.Voto;
 import main.java.view.*;
 import main.java.view.util.MensagemDialogo;
-
-import java.util.ArrayList;
-
 import javax.swing.JFrame;
 /**Para compilar é necessário estar na pasta src e executar:
 javac main.Main.java
@@ -17,6 +15,7 @@ Pode ser main/Main.java ou main.Main que funciona igualmente
 O trecho abaixo imprime separadamente cada um dos elementos
 Serve apenas para entender a sintaxe dos candidatos
 **/
+
 public final class Main implements iMain {
     public static void main(String[] args) {
         for (String[] linha : iArquivos.lerTxtNaoFormatado("candidatos.txt")){
@@ -31,7 +30,6 @@ public final class Main implements iMain {
         }
         String diretorioTrabalho = System.getProperty("user.dir");
         System.out.println(diretorioTrabalho);
-
         try {
             UrnaController controller = new UrnaController();
             MenuPrincipalView menuPrincipalView = new MenuPrincipalView(controller);
