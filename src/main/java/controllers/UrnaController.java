@@ -1,5 +1,6 @@
 package main.java.controllers;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import main.java.models.Arquivos;
@@ -27,7 +28,12 @@ public class UrnaController implements iUrnaController {
 
     @Override
     public void abrirModuloMesario() {
-        telaMesario = new MesarioView();
+        try {
+            telaMesario = new MesarioView();
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -97,7 +103,7 @@ public class UrnaController implements iUrnaController {
     }
 
     @Override
-    public void inserirEleitor(String nome) {
+    public void inserirEleitor(String nome, String nascimento) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'inserirEleitor'");
     }

@@ -17,7 +17,7 @@ public interface iUrnaController {
     void validarEleitor();
     void autorizarEleitor();
     void inserirCandidato();
-    void inserirEleitor(String nome);
+    void inserirEleitor(String nome, String nascimento);
     void inserirEleicao();
     void registrarVoto(String voto);
 }
