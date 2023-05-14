@@ -3,7 +3,7 @@ package main.java.view;
 import javax.swing.*;
 import main.java.controllers.*;
 import main.java.view.util.MensagemDialogo;
-
+import java.nio.file.*;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -21,8 +21,14 @@ public class MenuPrincipalView extends WindowView {
         private Image background;
         public Background() {
             String caminhoUser = System.getProperty("user.dir");
-            String caminhoImages = caminhoUser + "\\main\\resources\\menu\\images\\";
-            background = new ImageIcon(caminhoImages + "bolacha-ou-biscoito.jpg").getImage();
+            //String caminhoImages = caminhoUser + "\\main\\resources\\menu\\images\\";
+            Path caminhoImages = Paths.get(caminhoUser,"main","resources","menu","images");
+            Path backgroundjpg = caminhoImages.resolve("background.jpg");
+            String caminhoImagem = backgroundjpg.toString();
+            System.out.println(caminhoImages);
+            System.out.println(backgroundjpg);
+            System.out.println(caminhoImagem);
+            background = new ImageIcon(caminhoImagem).getImage();
         }
 
         @Override
