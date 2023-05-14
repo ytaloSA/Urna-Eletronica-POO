@@ -1,7 +1,7 @@
 package main.java.view;
 
 import javax.swing.*;
-
+import java.nio.file.*;
 import main.java.view.component.ButtonUrna;
 import main.java.view.component.VisorVotacaoView;
 import main.java.view.interfaces.iUrnaEletronicaView;
@@ -160,7 +160,8 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
          * Definindo o caminho relativo da aplicação com base na localização do diretório
          */
         String caminhoUser = System.getProperty("user.dir");
-        this.caminhoImages = caminhoUser + "\\main\\resources\\urna\\images\\";
+        //this.caminhoImages = caminhoUser + "\\main\\resources\\urna\\images\\";
+        this.caminhoImages = Paths.get(caminhoUser,"main","resources","urna","images").toString();
     }
 
     public void adicionarListenes() {

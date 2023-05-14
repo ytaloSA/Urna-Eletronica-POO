@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Font;
 import javax.swing.*;
 import javax.swing.border.*;
+import java.nio.file.*;
 
 /**
  * Classe para gerar o visor da urna eletrônica.
@@ -70,7 +71,8 @@ public class VisorVotacaoView extends JPanel {
          * Definindo o caminho relativo da aplicação com base na localização do diretório
          */
         String caminhoUser = System.getProperty("user.dir");
-        this.caminhoImages = caminhoUser + "\\main\\resources\\candidatos\\images\\";
+        //this.caminhoImages = caminhoUser + "\\main\\resources\\candidatos\\images\\";
+        this.caminhoImages = Paths.get(caminhoUser,"main","resources","candidatos","images").toString();
     }
 
     public void contruirPanelPrincipal(JPanel panel) {
