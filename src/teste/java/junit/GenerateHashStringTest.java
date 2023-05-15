@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
-import main.java.models.utils.Criptografia;
+import main.urnaeletronica.modelos.utils.Criptografia;
 
 public class GenerateHashStringTest {
     private final String texto = "Teste";
