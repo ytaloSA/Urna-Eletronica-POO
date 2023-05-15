@@ -196,7 +196,8 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
                             }
                         }
                     }  catch (Exception ex) {
-                        MensagemDialogo.mostrarMensagemDialogo(ex);
+                        ex.printStackTrace();
+                        MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
                     }
                 }
 
@@ -293,7 +294,8 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
             try {
                 throw new UnsupportedOperationException("Não é possível inserir mais números. Confirme o seu voto pressionando CONFIRMAR ou aperte CORRIGIR para reiniciar votação.");
             } catch (Exception ex) {
-                MensagemDialogo.mostrarMensagemDialogo(ex);
+                ex.printStackTrace();
+                MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
             }
         }
     }
@@ -305,9 +307,10 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
             numeroDigitado = "";
         } else {
             try {
-                throw new UnsupportedOperationException("Não há números digitados para apagar. Digite o número do seu candidato.");
+                throw new UnsupportedOperationException();
             } catch (Exception ex) {
-                MensagemDialogo.mostrarMensagemDialogo(ex);
+                ex.printStackTrace();
+                MensagemDialogo.mostrarMensagemDialogo("Não há números digitados para apagar. Digite o número do seu candidato.");
             }
         }
         visorVotacao.atualizarTelaVotacao(numeroDigitado.toCharArray());
@@ -317,20 +320,21 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
     public void confimarVoto() {
         if (aptoConfirmarVoto) {
             visorVotacao.encerrarVotacao();
+            MensagemDialogo.mostrarMensagemDialogo("Votação encerrada! Muito Obrigado por votar!");
             try {
-                throw new UnsupportedOperationException("Votação encerrada! Muito Obrigado por votar!");
-            } catch (Exception ex) {
-                MensagemDialogo.mostrarMensagemDialogo(ex);
-                janelaAberta = false;
-                numeroDigitado = "";
-                dispose();
+                controller.registrarVoto(numeroDigitado);
+            } catch (Exception e) {
+                e.printStackTrace();
+                MensagemDialogo.mostrarMensagemDialogo(e.getMessage() + "Desculpe pelo erro. Tente mais tarde.");
             }
-            //controller.registrarVoto(numeroDigitado);
+            numeroDigitado = "";
+            dispose();
         } else {
             try {
                 throw new UnsupportedOperationException("Digite todos os números necessários para poder confirmar o voto.");
             } catch (Exception ex) {
-                MensagemDialogo.mostrarMensagemDialogo(ex);
+                ex.printStackTrace();
+                MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
             }
         }
     }
@@ -338,6 +342,7 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
     @Override
     public void exibirVotoBranco() {
         numeroDigitado = "###";
+        visorVotacao.redefinirNumeroDigitado();
         visorVotacao.getJlNome().setText("Voto Branco");
         visorVotacao.mostrarDadosVoto();
         visorVotacao.getJlImgCandidato().setVisible(false);
@@ -346,7 +351,6 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
 
     @Override
     public void exibirVotoNulo() {
-        numeroDigitado = "***";
         visorVotacao.getJlNome().setText("Voto Nulo");
         visorVotacao.mostrarDadosVoto();
         visorVotacao.getJlImgCandidato().setVisible(false);
@@ -355,12 +359,16 @@ public class UrnaEletronicaView extends WindowView implements iUrnaEletronicaVie
     
     @Override
     public void exibirVotoValido() {
-        String nome = "Biscoito";
-        visorVotacao.getJlNome().setText(nome);
-        visorVotacao.mostrarDadosVoto();
-        visorVotacao.alterarFotoCandidato(nome);
-        visorVotacao.getJlImgCandidato().setVisible(true);
-        aptoConfirmarVoto = true;
+        String nome = controller.consultarNumeroCandidato(numeroDigitado);
+        if ("Nulo".equals(nome)) {
+            exibirVotoNulo();
+        } else {
+            visorVotacao.getJlNome().setText(nome);
+            visorVotacao.mostrarDadosVoto();
+            visorVotacao.alterarFotoCandidato(nome);
+            visorVotacao.getJlImgCandidato().setVisible(true);
+            aptoConfirmarVoto = true;
+        }
     }
 
     public void validarVoto() {

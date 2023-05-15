@@ -1,11 +1,13 @@
 package main.urnaeletronica.modelos;
 
+import java.security.NoSuchAlgorithmException;
 import main.urnaeletronica.modelos.utils.GeradorId;
 
 public final class Eleitor extends Participante{
     private String id;
     private String dataNascimento;
-    private boolean votou;
+    private Boolean votou;
+    private Boolean autorizado = false;
 
     public Eleitor(String nomeParticipante, String dataNascimento, String id, boolean votou) {
         super(nomeParticipante);
@@ -14,7 +16,7 @@ public final class Eleitor extends Participante{
         this.id = id;
     }
     
-    public Eleitor(String nomeParticipante, String dataNascimento) {
+    public Eleitor(String nomeParticipante, String dataNascimento) throws NoSuchAlgorithmException {
         super(nomeParticipante);
         this.votou = false;
         this.dataNascimento=dataNascimento;
@@ -43,5 +45,17 @@ public final class Eleitor extends Participante{
 
     public void setVotou(boolean votou) {
         this.votou = votou;
+    }
+
+    public void setVotou(Boolean votou) {
+        this.votou = votou;
+    }
+
+    public Boolean getAutorizado() {
+        return autorizado;
+    }
+
+    public void setAutorizado(Boolean autorizado) {
+        this.autorizado = autorizado;
     }
 }

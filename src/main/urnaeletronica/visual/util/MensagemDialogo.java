@@ -9,11 +9,10 @@ public abstract class MensagemDialogo {
      * Classe que exibe caixa de díalogo para exceções, mas verificando se já há uma janela sendo exibida
      * @param ex é a exception lançada e tratada em um bloco try-catch
      */
-    public static boolean mostrarMensagemDialogo(Exception ex) {
+    public static boolean mostrarMensagemDialogo(String msg) {
         if (popupFechado) {
             popupFechado = false;
-            ex.printStackTrace();
-            int option = JOptionPane.showOptionDialog(null, ex.getMessage(), "Mensagem", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"OK"},null);
+            int option = JOptionPane.showOptionDialog(null, msg, "Mensagem", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"OK"},null);
             
             popupFechado = true;
             

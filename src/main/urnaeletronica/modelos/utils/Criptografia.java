@@ -42,6 +42,25 @@ public final class Criptografia {
         return hexString.toString();
     }
 
+    public static String getHashCandidatos() throws NoSuchAlgorithmException, IOException {
+        return calcularHashArquivo("candidatos.txt");
+    }
+
+    public static String getHashEleitores() throws NoSuchAlgorithmException, IOException {
+        return calcularHashArquivo("eleitores.txt");
+    }
+
+    public static String getHashVotos() throws NoSuchAlgorithmException, IOException {
+        return calcularHashArquivo("votos.txt");
+    }
+
+    private static String calcularHashArquivo(String arquivoTxt) throws NoSuchAlgorithmException, IOException {
+        String localDeTrabalho = System.getProperty("user.dir");
+        String caminho = localDeTrabalho+"/main/"+ arquivoTxt;
+        File file = new File(caminho);
+        return generateHashFile(file);
+    }
+
     public static boolean Validarhash(String hash, String linha) throws NoSuchAlgorithmException {
         String newHash = Criptografia.generateHashString(linha);
 
@@ -49,5 +68,10 @@ public final class Criptografia {
             return true;
         }
         return false;
+    }
+
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
+        String hash = generateHashString("Candidato:Biscoito,Id:157");
+        System.out.println(hash);
     }
 }

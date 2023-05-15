@@ -14,8 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -23,42 +24,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.text.MaskFormatter;
-
+import main.urnaeletronica.modelos.Eleitor;
 import main.urnaeletronica.visual.util.MensagemDialogo;
 
 public class MesarioView extends WindowView {
     private CardLayout cardLayout;
     private JPanel menu, panelBackground, panelPrincipal, panelCadastrarEleitor, panelAutorizarEleitor, panelReiniciarEleicao;
-    private JButton btnAutorizarEleitor,btnCadEleitor, btnResetEleicao, btnFecharPrincipal, btnVoltarCadEleitor, btnVoltarAutEleitor, btnEnviarEleitor, btnReinicarEleicao;
+    private JButton btnAutorizarEleitor,btnCadEleitor, btnResetEleicao, btnFecharPrincipal, btnEnviarEleitor, btnReinicarEleicao, ultimoBotaoClicadoAutorizarEleitor;
     private JTextField nomeEleitor;
     private JLabel tituloPrincipal, tituloCadastroEleitor, tituloAutorizarEleitor, tituloReiniciarEleicao;
-
-    public ArrayList<String[]> eleitoresFake() {
-        ArrayList<String[]> eleitores = new ArrayList<String[]>();
-        String [] str1 = {"#32587", "YURI DIAS PEREIRA GOMES", "11/11/1996"};
-        String [] str2 = {"#32587", "YTALO SANTOS ARAGAO", "00/00/0000"};
-        String [] str3 = {"#32587", "KALIL ARAUJO BISPO", "00/00/0000"};
-        String [] str4 = {"#32587", "LUCAS ARAGAO DAMACENO", "00/00/0000"};
-        String [] str5 = {"#32587", "GABRIEL ARGOLO JULIAO", "00/00/0000"};
-        String [] str6 = {"#32587", "PEDRO AFONSO TAVARES", "00/00/0000"};
-        String [] str7 = {"#32587", "GYANNINE CANDEIAS GOMES", "00/00/0000"};
-        String [] str8 = {"#32587", "LETICIA CAVALCANTI", "00/00/0000"};
-        String [] str9 = {"#32587", "LUCCA COSTA LEANDRO", "00/00/0000"};
-        String [] str10 = {"#32587", "DOUGLAS CUNHA DE JESUS", "00/00/0000"};
-        eleitores.add(str1);
-        eleitores.add(str2);
-        eleitores.add(str3);
-        eleitores.add(str4);
-        eleitores.add(str5);
-        eleitores.add(str6);
-        eleitores.add(str7);
-        eleitores.add(str8);
-        eleitores.add(str9);
-        eleitores.add(str10);
-
-        return eleitores;
-    }
+    private String ultimoIdAutorizado;
 
     public MesarioView () throws ParseException {
         if (!janelaAberta) {
@@ -87,15 +62,15 @@ public class MesarioView extends WindowView {
             panelAutorizarEleitor.setSize(panelBackground.getWidth(), panelBackground.getHeight());
             panelAutorizarEleitor.setLayout(new BorderLayout());
 
-            ArrayList<String[]> eleitores = eleitoresFake();
+            Map<String, Eleitor> eleitores = controller.getEleicao().getEleitores();
             
             JPanel listaPanels = new JPanel();
             listaPanels.setLayout(new GridLayout(eleitores.size(),2));
             
-            Boolean style = true, votou = false, autorizado = false;
+            Boolean style = true;
 
-            for (String [] eleitor : eleitores) {
-                gerarListaEleitores(listaPanels, eleitor[0], eleitor[1], eleitor[2], style, autorizado, votou);
+            for (Map.Entry<String,Eleitor> eleitor : eleitores.entrySet()) {
+                gerarListaEleitores(listaPanels, eleitor.getValue().getId(), eleitor.getValue().getNome(), eleitor.getValue().getDataNascimento(), style, eleitor.getValue().getAutorizado(), eleitor.getValue().getVotou());
                 style = !style;
             }
             
@@ -156,8 +131,8 @@ public class MesarioView extends WindowView {
             constraints.weightx = 0.5;
             containerInputs.add(nascimento, constraints);
 
-            MaskFormatter mask = new MaskFormatter("##/##/####");
-            JFormattedTextField nascimentoEleitor = new JFormattedTextField(mask);
+            JTextField nascimentoEleitor = new JFormattedTextField(createFormatter("dd/MM/yyyy"));
+            nascimentoEleitor.setColumns(10);
             nascimentoEleitor.setHorizontalAlignment(SwingConstants.CENTER);
             constraints.gridx = 1;
             constraints.gridy = 1;
@@ -168,7 +143,6 @@ public class MesarioView extends WindowView {
             panelCadastrarEleitor.add(containerInputs);
             
             String dataInput = nascimentoEleitor.getText();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
             JPanel containerBtnEnviarEleitor = new JPanel();
             containerBtnEnviarEleitor.setLayout(new GridLayout(1,1));
@@ -178,12 +152,22 @@ public class MesarioView extends WindowView {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        Date data = dateFormat.parse(dataInput);
-                        System.out.println("Data digitada: " + data);
-                    } catch (ParseException ex) {
-                        MensagemDialogo.mostrarMensagemDialogo(new ParseException("Formato de data inválido. Digite a data no formato DD/MM/YYYY.", 0));
+                        if (nomeEleitor.getText().length() == 0) {
+                            throw new IllegalArgumentException("Escreva um nome para cadastrar eleitor.");
+                        }
+                    } catch (Exception ex) {
+                        MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
                     }
-                    enviarCadastroEleitor(nomeEleitor.getText(), nascimentoEleitor.getText());
+                    String input = nascimentoEleitor.getText();
+                    try {
+                        if (!isValidDate(input)) {
+                            throw new IllegalArgumentException("Formato de data inválido. Digite a data no formato DD/MM/YYYY.");
+                        }
+                        enviarCadastroEleitor(nomeEleitor.getText(), nascimentoEleitor.getText());
+                    } catch (IllegalArgumentException ex) {
+                        ex.printStackTrace();
+                        MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
+                    }
                 }
             });
             containerBtnEnviarEleitor.add(btnEnviarEleitor);
@@ -200,6 +184,12 @@ public class MesarioView extends WindowView {
             setTamanhoFontText(tituloReiniciarEleicao, 10f);
             tituloReiniciarEleicao.setHorizontalAlignment(SwingConstants.CENTER);
             btnReinicarEleicao = new JButton("Confimar");
+            btnReinicarEleicao.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    enviarResetEleicao();
+                }
+            });
             containerTituloReiniciarEleicao.add(tituloReiniciarEleicao, BorderLayout.CENTER);
             containerBtnReiniciarEleicao.add(btnReinicarEleicao, BorderLayout.CENTER);
             panelReiniciarEleicao.add(containerTituloReiniciarEleicao);
@@ -243,23 +233,6 @@ public class MesarioView extends WindowView {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     dispose();
-                    janelaAberta = false;
-                }
-            });
-
-            btnVoltarCadEleitor = new JButton("Cancelar");
-            btnVoltarCadEleitor.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mostrarPrincipal();
-                }
-            });
-
-            btnVoltarAutEleitor = new JButton("Cancelar");
-            btnVoltarAutEleitor.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mostrarPrincipal();
                 }
             });
 
@@ -273,6 +246,31 @@ public class MesarioView extends WindowView {
             setVisible(true);
         }
 
+    }
+
+    private SimpleDateFormat createFormatter(String pattern) {
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        formatter.setLenient(false);
+        return formatter;
+    }
+
+    private boolean isValidDate(String input) {
+        try {
+            SimpleDateFormat formatter = createFormatter("dd/MM/yyyy");
+            Date date = formatter.parse(input);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    protected void enviarResetEleicao() {
+        Boolean retorno = controller.reiniciarEleicao();
+        if (retorno) {
+            MensagemDialogo.mostrarMensagemDialogo("Votos apagados!");
+        } else {
+            MensagemDialogo.mostrarMensagemDialogo("Erro interno: Não foi possível apagar os votos.");
+        }
     }
 
     public void mostrarPrincipal() {
@@ -292,22 +290,38 @@ public class MesarioView extends WindowView {
     }
 
     public void gerarListaEleitores(JPanel listaPanels, String id, String nome, String nascimento, Boolean style, Boolean autorizado, Boolean votou) {
-        JLabel idEleitor = new JLabel(id);
-        idEleitor.setHorizontalAlignment(SwingConstants.CENTER);
+        //JLabel idEleitor = new JLabel(id);
+        //idEleitor.setHorizontalAlignment(SwingConstants.CENTER);
         JLabel nomeEleitor = new JLabel(nome);
+        nomeEleitor.setHorizontalAlignment(SwingConstants.CENTER);
         JLabel nascimentoEleitor = new JLabel(nascimento);
         nascimentoEleitor.setHorizontalAlignment(SwingConstants.CENTER);
         JPanel panelEleitor = new JPanel();
-        panelEleitor.setLayout(new GridLayout(1,4));
-        panelEleitor.add(idEleitor);
+        panelEleitor.setLayout(new GridLayout(1,3));
+        //panelEleitor.add(idEleitor);
         panelEleitor.add(nomeEleitor);
         panelEleitor.add(nascimentoEleitor);
+        JButton btn = new JButton();
 
         if (!autorizado && !votou) {
-            JButton btn = new JButton("Autorizar");
+            btn = new JButton("Autorizar");
+            btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JButton btn = (JButton) e.getSource();
+                    changeAutorization(btn, id, nome);
+                }
+            });
             panelEleitor.add(btn);
         } else if (autorizado && !votou) {
-            JButton btn = new JButton("Desautorizar");
+            btn = new JButton("Desautorizar");
+            btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JButton btn = (JButton) e.getSource();
+                    changeAutorization(btn, id, nome);
+                }
+            });
             panelEleitor.add(btn);
         } else {
             JLabel jaVotou = new JLabel("Votou");
@@ -315,14 +329,44 @@ public class MesarioView extends WindowView {
             panelEleitor.add(jaVotou);
         }
 
+
         listaPanels.add(panelEleitor);
         if (style) {
             panelEleitor.setBackground(Color.LIGHT_GRAY);
         }
     }
 
+    private void changeAutorization (JButton btn, String id, String nome) {
+        if (ultimoBotaoClicadoAutorizarEleitor != null && ultimoBotaoClicadoAutorizarEleitor != btn) {
+            ultimoBotaoClicadoAutorizarEleitor.setText("Autorizar");
+            controller.desautorizarEleitor(ultimoIdAutorizado);
+        }
+
+        if (ultimoIdAutorizado != id) {
+            if (controller.autorizarEleitor(id)) {
+                btn.setText("Desautorizar");
+                ultimoBotaoClicadoAutorizarEleitor = btn;
+                ultimoIdAutorizado = id;
+                MensagemDialogo.mostrarMensagemDialogo(nome + " foi autorizado a votar.");
+            }
+        } else {
+            if (controller.desautorizarEleitor(id)) {
+                btn.setText("Autorizar");
+                ultimoBotaoClicadoAutorizarEleitor = null;
+                ultimoIdAutorizado = "";
+                MensagemDialogo.mostrarMensagemDialogo(nome + " foi desautorizado.");
+            }
+        }
+    }
+
     private void enviarCadastroEleitor(String nome, String nascimento) {
-        controller.inserirEleitor(nome, nascimento);
+        try {
+            controller.inserirEleitor(nome, nascimento);
+            MensagemDialogo.mostrarMensagemDialogo("Cadastrado novo eleitor.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            MensagemDialogo.mostrarMensagemDialogo(e.getMessage());
+        }
     }
 
     private void setTamanhoFontText(Component componente, Float tamanho) {

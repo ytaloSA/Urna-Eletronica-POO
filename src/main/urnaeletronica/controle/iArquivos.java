@@ -1,4 +1,5 @@
 package main.urnaeletronica.controle;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import main.urnaeletronica.modelos.Arquivos;
@@ -28,10 +29,10 @@ public interface iArquivos {
     public static Boolean comparar(String arquivo,ArrayList<String[]> dadosDeProva) {
         return Arquivos.compararDados(arquivo, dadosDeProva);
     }
-    public static void escreverArquivo(String arquivos, String[] dadosParaEscrever){
+    public static void escreverArquivo(String arquivos, String[] dadosParaEscrever) throws Exception{
         Arquivos.escreverTxt(arquivos,dadosParaEscrever);
     }
-    public static ArrayList<String[]> lerTxtNaoFormatado(String arquivo){
+    public static ArrayList<String[]> lerTxtNaoFormatado(String arquivo) throws FileNotFoundException{
         return Arquivos.lerTxtNaoFormatado(arquivo);
     }
     public static ArrayList<String[]> lerTxtFormatado(String arquivo) {

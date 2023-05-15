@@ -19,6 +19,15 @@ public abstract class WindowView extends JFrame {
     }
 
     /**
+     * Sobrescrita do método dispose para acrescentear um reset a variável de controle
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        janelaAberta = false;
+    }
+
+    /**
      * Reseta a variável de controle quando a janela é fechada
      */
     public void adicionarListenerJanelaFechando() {

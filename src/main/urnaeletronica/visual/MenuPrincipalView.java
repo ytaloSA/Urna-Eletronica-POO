@@ -1,15 +1,14 @@
 package main.urnaeletronica.visual;
 
 import javax.swing.*;
-
 import main.urnaeletronica.controle.*;
 import main.urnaeletronica.visual.util.MensagemDialogo;
-
-import java.nio.file.*;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Classe responsável por gerar a tela do menu principal da aplicação.
@@ -18,6 +17,7 @@ public class MenuPrincipalView extends WindowView {
     private JPanel panel;
     private JButton votarBtn, mesarioBtn, resultadosBtn, sairBtn;
     private Background backgroundPanel;
+    private String msg;
     
     private class Background extends JPanel {
         private Image background;
@@ -40,8 +40,23 @@ public class MenuPrincipalView extends WindowView {
         }
     }
 
+    public MenuPrincipalView(UrnaController controller, String msg) {
+        super();
+        this.msg = msg;
+        ConstructMenuPrincipalView(controller);
+        if (!controller.getPermissao()) {
+            MensagemDialogo.mostrarMensagemDialogo(msg);
+            MensagemDialogo.mostrarMensagemDialogo("Necessário realizar as devidas correções para poder prosseguir com a votação.");
+        }
+    }
+
     public MenuPrincipalView(UrnaController controller) {
         super();
+        ConstructMenuPrincipalView(controller);
+    }
+
+    public void ConstructMenuPrincipalView(UrnaController controller) {
+        
         if (!janelaAberta) {
             WindowView.controller = controller;
             
@@ -68,21 +83,38 @@ public class MenuPrincipalView extends WindowView {
              */
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    try {
+                        controller.atualizarPermissao();
+                    } catch (Exception ex) {
+                        msg = ex.getMessage();
+                    }
                     /**
                      * Verifica qual o botão pressionado para chamar o método correspondente
                      */
-                    try {
-                        if (e.getSource() == resultadosBtn) {
+                    if (e.getSource() == resultadosBtn && controller.getPermissao()) {
+                        try {
                             controller.listarResultados();
-                        } else if (e.getSource() == mesarioBtn) {
-                            controller.abrirModuloMesario();
-                        } else if (e.getSource() == votarBtn) {
-                            controller.iniciarVotacao();
-                        } else if (e.getSource() == sairBtn) {
-                            System.exit(0);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
                         }
-                    } catch (Exception ex) {
-                        MensagemDialogo.mostrarMensagemDialogo(ex);
+                    } else if (e.getSource() == mesarioBtn && controller.getPermissao()) {
+                        try {
+                            controller.abrirModuloMesario();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            MensagemDialogo.mostrarMensagemDialogo(ex.getMessage());
+                        }
+                    } else if (e.getSource() == votarBtn && controller.getPermissao()) {
+                        if (controller.validarEleitor()) {
+                            controller.iniciarVotacao();
+                        } else {
+                            MensagemDialogo.mostrarMensagemDialogo("Sr. mesário, autorize o eleitor a votar.");
+                        }
+                    } else if (e.getSource() == sairBtn) {
+                        System.exit(0);
+                    } else {
+                        MensagemDialogo.mostrarMensagemDialogo(msg);
                     }
                 }
             };
@@ -115,18 +147,5 @@ public class MenuPrincipalView extends WindowView {
             panel.add(sairBtn);
             setVisible(true);
         }
-    }
-
-    /**
-     * Reseta a variável de controle quando a janela é fechada
-     */
-    public void adicionarListenerJanelaFechando() {
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                //super.windowClosing(e);
-                janelaAberta = false;
-            }
-        });
     }
 }

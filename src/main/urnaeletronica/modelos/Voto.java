@@ -1,5 +1,6 @@
 package main.urnaeletronica.modelos;
 
+import main.urnaeletronica.modelos.utils.Criptografia;
 import main.urnaeletronica.modelos.utils.GeradorId;
 
 public class Voto {
@@ -15,6 +16,13 @@ public class Voto {
     public Voto(String voto, String id) {
         this.voto = voto;
         this.id = id;
+    }
+
+    public void salvar() throws Exception {
+        String texto = "Voto:"+voto+",Id:"+id;
+        String hash = Criptografia.generateHashString(texto);
+        String[] dados = {voto, id, hash};
+        Arquivos.escreverTxt("votos.txt", dados);
     }
 
     public String getId() {

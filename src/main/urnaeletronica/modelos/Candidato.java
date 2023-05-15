@@ -3,9 +3,9 @@ package main.urnaeletronica.modelos;
 public final class Candidato extends Participante{
     private String numero;
 
-    public Candidato(String nome, String id){
+    public Candidato(String nome, String numero){
         super(nome);
-        this.numero = id;
+        this.numero = numero;
     }
 
     public String getNumero() {

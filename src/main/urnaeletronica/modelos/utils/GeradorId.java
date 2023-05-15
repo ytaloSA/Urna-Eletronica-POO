@@ -13,4 +13,8 @@ public abstract class GeradorId {
         
         return id;
     }
+
+    public static void main(String[] args) {
+        System.out.println(getId());
+    }
 }
